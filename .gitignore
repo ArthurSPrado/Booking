@@ -1,0 +1,36 @@
+# Ignorar arquivos e pastas de compilação do Visual Studio
+bin/
+obj/
+
+# Ignorar arquivos de configuração do Visual Studio
+.vscode/
+.suo
+.user
+.sln.docstates
+
+# Ignorar pacotes NuGet
+packages/
+
+# Ignorar arquivos de log e exceções
+*.log
+*.exceptions
+
+# Ignorar arquivos temporários
+*.swp
+*~
+
+# Ignorar arquivos de compilação
+*.dll
+*.exe
+*.pdb
+*.dll.config
+*.exe.config
+
+# Ignorar arquivos de publicação
+*.Publish.xml
+
+# Ignorar arquivos de usuário do ReSharper
+_ReSharper*/
+*.suo
+*.user
+*.resharper
