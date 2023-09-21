@@ -1,3 +1,4 @@
+using Bookify.Application.Abstractions.Clock;
 using Bookify.Application.Abstractions.Messaging;
 using Bookify.Domain.Abstractions;
 using Bookify.Domain.Apartments;
@@ -13,19 +14,22 @@ internal sealed class ReserveBookingCommandHandler : ICommandHandler<ReserveBook
     private readonly IBookingRepository _bookingRepository;
     private readonly IUnityOfWork _unityOfWork;
     private readonly PricingService _pricingService;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
     public ReserveBookingCommandHandler(
         IUserRepository userRepository, 
         IApartmentRepository apartmentRepository, 
         IBookingRepository bookingRepository, 
         IUnityOfWork unityOfWork, 
-        PricingService pricingService)
+        PricingService pricingService, 
+        IDateTimeProvider dateTimeProvider)
     {
         _userRepository = userRepository;
         _apartmentRepository = apartmentRepository;
         _bookingRepository = bookingRepository;
         _unityOfWork = unityOfWork;
         _pricingService = pricingService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<Guid>> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
@@ -46,7 +50,7 @@ internal sealed class ReserveBookingCommandHandler : ICommandHandler<ReserveBook
         
         var duration = DateRange.Create(request.StartDate, request.EndDate);
         
-        if(await _bookingRepository.IsOverlappingAsync(apartment.Id, duration, cancellationToken))
+        if(await _bookingRepository.IsOverlappingAsync(apartment, duration, cancellationToken))
         {
             return Result.Failure<Guid>(BookingErrors.Overlap);
         }
@@ -55,7 +59,7 @@ internal sealed class ReserveBookingCommandHandler : ICommandHandler<ReserveBook
             apartment,
             user.Id,
             duration,
-            utcNow: DateTime.UtcNow,
+            _dateTimeProvider.UtcNow,
             _pricingService);
         
         _bookingRepository.Add(booking);
