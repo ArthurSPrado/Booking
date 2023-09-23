@@ -15,6 +15,7 @@ internal sealed class
         (int)BookingStatus.Confirmed,
         (int)BookingStatus.Completed
     };
+
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
 
     public SearchApartmentsQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
@@ -64,9 +65,10 @@ internal sealed class
                 {
                     request.StartDate,
                     request.EndDate,
-                    ActiveBookingStatuses 
+                    ActiveBookingStatuses
                 },
-                splitOn:"Country");
+                splitOn: "Country");
+
         return apartments.ToList();
     }
 }
